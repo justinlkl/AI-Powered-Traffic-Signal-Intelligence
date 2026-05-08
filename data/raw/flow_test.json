@@ -1,0 +1,16 @@
+[
+  {
+    "vehicle": [
+      {
+        "route": [
+          "road_N",
+          "junction_1",
+          "road_S"
+        ],
+        "interval": 30.0,
+        "startTime": 0,
+        "endTime": 300
+      }
+    ]
+  }
+]
