@@ -1,0 +1,2 @@
+timestamp,detector_id,location,volume,speed,occupancy
+2026-05-08 00:00:00,SAMPLE_001,Nathan Road - Sample,120,40,0.12

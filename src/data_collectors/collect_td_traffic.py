@@ -10,10 +10,14 @@ import argparse
 import os
 
 
-def fetch_td_traffic():
-    """Fetch traffic detector data from TD API"""
-    url = "https://resource.data.one.gov.hk/td/traffic-data-strategic-major-roads.xml"
+DEFAULT_TD_URL = "https://resource.data.one.gov.hk/td/traffic-data-strategic-major-roads.xml"
 
+
+def fetch_td_traffic(url: str = DEFAULT_TD_URL, fallback: str | None = None) -> pd.DataFrame:
+    """Fetch traffic detector data from TD API.
+
+    If the request fails (404, network), optionally read a fallback CSV.
+    """
     try:
         response = requests.get(url, timeout=10)
         response.raise_for_status()
@@ -54,20 +58,31 @@ def fetch_td_traffic():
 
     except Exception as e:
         print(f"Error fetching TD traffic data: {e}")
+        if fallback and os.path.exists(fallback):
+            try:
+                print(f"Using fallback sample data: {fallback}")
+                return pd.read_csv(fallback)
+            except Exception as ex:
+                print(f"Failed to read fallback file: {ex}")
         return pd.DataFrame()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', default='data/raw/td_traffic.csv')
+    parser.add_argument('--url', default=None,
+                        help='Override TD API URL (optional)')
+    parser.add_argument('--fallback', default='data/raw/td_traffic_sample.csv',
+                        help='Fallback CSV if fetch fails')
     args = parser.parse_args()
 
     out_dir = os.path.dirname(args.output) or '.'
     os.makedirs(out_dir, exist_ok=True)
 
-    df = fetch_td_traffic()
+    url = args.url if args.url else DEFAULT_TD_URL
+    df = fetch_td_traffic(url=url, fallback=args.fallback)
     if not df.empty:
         df.to_csv(args.output, index=False)
         print(f"✓ Fetched {len(df)} detector records → {args.output}")
     else:
-        print("✗ Failed to fetch data")
+        print("✗ Failed to fetch data from TD and no fallback available")
