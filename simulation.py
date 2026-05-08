@@ -140,9 +140,9 @@ TOTAL_STEPS     = 300    # 5-minute simulation at 1s resolution
 LOG_INTERVAL    = 5      # record every 5 seconds
 
 SCENARIOS = [
-    ("Morning Peak",   "cityflow_env/flow_morning_peak.json", 0),
-    ("Off-Peak",       "cityflow_env/flow_offpeak.json",      0),
-    ("Rainy Morning",  "cityflow_env/flow_rainy.json",        1),
+    ("Morning Peak",   "flow_morning_peak.json", 0),
+    ("Off-Peak",       "flow_offpeak.json",      0),
+    ("Rainy Morning",  "flow_rainy.json",       1),
 ]
 
 
@@ -243,11 +243,11 @@ def run_all_scenarios(output_path: str = "output/simulation_state_log.csv"):
                     else ctrl_cls(weather=weather))
 
             if CITYFLOW_AVAILABLE:
-                # Write temp config pointing to correct flow file
-                with open("cityflow_env/config.json") as f:
+                # Write temp config pointing to correct flow file (config.json at repo root)
+                with open("config.json") as f:
                     cfg = json.load(f)
                 cfg["flowFile"] = os.path.basename(flow_file)
-                tmp_cfg = "cityflow_env/config_temp.json"
+                tmp_cfg = "config_temp.json"
                 with open(tmp_cfg, "w") as f:
                     json.dump(cfg, f)
                 logs = run_cityflow(tmp_cfg, ctrl, scenario_name, weather)

@@ -25,7 +25,7 @@ Quick start
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirement.txt
+pip install -r requirements.txt
 ```
 
 2. Run the simulation (generates CSV in `output/`):
@@ -61,8 +61,3 @@ Files of interest
 - `evaluation.py` — summary metrics and improvement tables
 - `dashboard.py` — Streamlit visualization
 - `collector.py` — state builder used by the runner and dashboard
-
-License
--------
-Add your project's license here.
-

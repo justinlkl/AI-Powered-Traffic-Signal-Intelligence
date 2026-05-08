@@ -6,13 +6,13 @@
       "width": 10,
       "roads": ["road_0_1_0", "road_1_0_0", "road_2_1_0", "road_1_2_0"],
       "roadLinks": [
-        {"type": "go_straight", "startRoad": "road_0_1_0", "endRoad": "road_1_2_0",
+        {"type": "go_straight", "startRoad": "road_0_1_0", "endRoad": "road_1_3_0",
           "laneLinks": [{"startLaneIndex": 0, "endLaneIndex": 0, "points": []}]},
-        {"type": "go_straight", "startRoad": "road_2_1_0", "endRoad": "road_1_0_0",
+        {"type": "go_straight", "startRoad": "road_3_1_0", "endRoad": "road_1_0_0",
           "laneLinks": [{"startLaneIndex": 0, "endLaneIndex": 0, "points": []}]},
-        {"type": "go_straight", "startRoad": "road_3_1_0", "endRoad": "road_1_4_0",
+        {"type": "go_straight", "startRoad": "road_2_1_0", "endRoad": "road_1_4_0",
           "laneLinks": [{"startLaneIndex": 0, "endLaneIndex": 0, "points": []}]},
-        {"type": "go_straight", "startRoad": "road_4_1_0", "endRoad": "road_1_3_0",
+        {"type": "go_straight", "startRoad": "road_4_1_0", "endRoad": "road_1_2_0",
           "laneLinks": [{"startLaneIndex": 0, "endLaneIndex": 0, "points": []}]}
       ],
       "trafficLight": {
