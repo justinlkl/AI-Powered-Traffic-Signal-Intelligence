@@ -50,6 +50,9 @@ class StateSnapshot:
 
     # Vehicle composition
     vehicle_mix: float = 0.0  # 0.0 = all private cars, 1.0 = all HGV/buses
+    # Transit-signal priority flag (0/1). When set, controllers may extend
+    # green times to allow an approaching bus through the intersection.
+    bus_approaching: int = 0
 
     # ── Derived helpers ───────────────────────────────────────────────────
     @property
@@ -148,7 +151,8 @@ class Preprocessor:
              ped_wait_ew: float,
              rainfall_mm_hr: float,
              timestamp: datetime.datetime,
-             vehicle_mix: float = 0.0) -> StateSnapshot:
+             vehicle_mix: float = 0.0,
+             bus_approaching: int = 0) -> StateSnapshot:
         """
         Merge all sensor streams into a single StateSnapshot.
         Lane IDs follow CityFlow roadnet.json naming:
@@ -172,7 +176,8 @@ class Preprocessor:
             p_EW=self.clip_ped_wait(ped_wait_ew),
             time_slot=timestamp.hour,
             weather=self.classify_weather(rainfall_mm_hr),
-            vehicle_mix=max(0.0, min(1.0, vehicle_mix))
+            vehicle_mix=max(0.0, min(1.0, vehicle_mix)),
+            bus_approaching=1 if int(bus_approaching) != 0 else 0,
         )
 
 
@@ -240,8 +245,9 @@ class HKTransportCollector:
             # XML parsing (simplified; real deployment would parse properly)
             speeds = {}
             for seg_id, direction in self.ROAD_TO_DIRECTION.items():
-                # Placeholder: extract speed from XML text
-                speeds[direction] = 30.0   # fallback
+                # NOT IMPLEMENTED: XML parsing omitted for this prototype.
+                # Fallback speed is used so the pipeline remains operational.
+                speeds[direction] = 30.0
             return speeds
         except Exception:
             return {}
@@ -330,8 +336,9 @@ class SyntheticStateBuilder:
             ped_wait_ns=self._ped_wait_ns,
             ped_wait_ew=self._ped_wait_ew,
             rainfall_mm_hr=rainfall,
-            timestamp=datetime.datetime(2025, 5, 1, hour, 0, 0),
-            vehicle_mix=0.05 if self.weather == 1 else 0.0
+            timestamp=datetime.datetime(2026, 5, 1, hour, 0, 0),
+            vehicle_mix=0.05 if self.weather == 1 else 0.0,
+            bus_approaching=0
         )
 
     def reset_pedestrians(self):
@@ -371,6 +378,8 @@ class DeploymentStateBuilder:
         # Bus proximity → vehicle_mix
         bus_eta = self._bus_api.fetch_next_bus_seconds(self._bus_stop_id)
         vehicle_mix = 0.15 if (bus_eta is not None and bus_eta < 30) else 0.02
+        # Transit signal priority flag: set if a bus is approaching within 60s
+        bus_approaching = 1 if (bus_eta is not None and bus_eta < 60) else 0
 
         # Pedestrian waiting (physical sensor would replace this)
         dt = 5
@@ -385,7 +394,8 @@ class DeploymentStateBuilder:
             ped_wait_ew=self._ped_wait_ew,
             rainfall_mm_hr=rainfall,
             timestamp=datetime.datetime.now(),
-            vehicle_mix=vehicle_mix
+            vehicle_mix=vehicle_mix,
+            bus_approaching=bus_approaching
         )
 
 
@@ -401,8 +411,9 @@ if __name__ == "__main__":
         ped_wait_ns=45.0,
         ped_wait_ew=72.0,
         rainfall_mm_hr=18.0,
-        timestamp=datetime.datetime(2025, 5, 1, 8, 15, 0),
-        vehicle_mix=0.05
+        timestamp=datetime.datetime(2026, 5, 1, 8, 15, 0),
+        vehicle_mix=0.05,
+        bus_approaching=0
     )
     print(snap)
     print("State vector:", snap.to_vector())

@@ -54,6 +54,19 @@ Notes
 - If you use CityFlow, place its environment files under `cityflow_env/` and
   update `simulation.py` to point at the correct `flow_*.json` files.
 
+Known limitations
+-----------------
+- Pedestrian phase in the controller is conceptual: the code uses an
+  internal `PHASE_PEDESTRIAN` (4) which is mapped to CityFlow's all-red
+  phase (one of the yellow/all-red slots). As a result the dashboard and
+  CSV logs will show a `phase_label` of "Pedestrian" while CityFlow
+  actually applies an all-red transition. This is a prototype
+  approximation and is documented in the report.
+- Transit-signal-priority (`bus_approaching`) is supported by the
+  controller. The `StateSnapshot` dataclass includes a `bus_approaching`
+  flag, and the `DeploymentStateBuilder` sets it when a bus ETA is near.
+  The synthetic state builder currently leaves this flag unset (0).
+
 Files of interest
 -----------------
 - `controller.py` — controller implementations and phase constants

@@ -57,7 +57,11 @@ class SyntheticEngine:
     SCENARIOS = {
         "Morning Peak":   {"interval_N": 3.0, "interval_E": 5.0, "weather": 0},
         "Off-Peak":       {"interval_N": 6.0, "interval_E": 10.0, "weather": 0},
-        "Rainy Morning":  {"interval_N": 2.1, "interval_E": 3.6,  "weather": 1},
+        # Rainy morning: keep arrival rates close to Morning Peak but
+        # reflect primarily reduced discharge (slower service), not a huge
+        # increase in arrivals. Adjusted intervals to avoid artificially
+        # extreme demand spikes.
+        "Rainy Morning":  {"interval_N": 2.8, "interval_E": 4.5,  "weather": 1},
     }
 
     def __init__(self, scenario_name: str):

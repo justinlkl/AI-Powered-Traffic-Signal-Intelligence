@@ -183,9 +183,11 @@ class AdaptiveController(BaseController):
         return (ns / ew) > self.DEMAND_RATIO_THRESH
 
     def _ped_needed(self, state: "StateSnapshot") -> bool:
+        # Use pedestrian *wait time* thresholds only. The previous implementation
+        # also checked `(p_NS + p_EW) > 30`, which mixes units (s + s) and would
+        # trigger far too often; remove that condition to avoid spurious ped phases.
         return (state.p_NS > self.PED_WAIT_THRESHOLD or
-                state.p_EW > self.PED_WAIT_THRESHOLD or
-                (state.p_NS + state.p_EW) > 30)
+            state.p_EW > self.PED_WAIT_THRESHOLD)
 
     # ── Main decision loop (called every second) ──────────────────────────────
 
