@@ -46,6 +46,36 @@ python evaluation.py
 streamlit run dashboard.py
 ```
 
+Data collection & calibration
+-----------------------------
+You can collect real-world data and calibrate CityFlow flows using the
+included collector scripts under `src/data_collectors`:
+
+1. Fetch TD traffic detectors (one-off or cron):
+
+```bash
+python src/data_collectors/collect_td_traffic.py --output data/raw/td_traffic.csv
+```
+
+2. Fetch HKO weather (appends to CSV):
+
+```bash
+python src/data_collectors/collect_weather.py --output data/raw/weather.csv
+```
+
+3. Calibrate a CityFlow flow.json from collected TD data:
+
+```bash
+python src/data_collectors/calibrate_flow.py --input data/raw/td_traffic.csv \
+  --output data/raw/flow_calibrated.json
+```
+
+4. Use the calibrated flow with your CityFlow runner (or adapt
+   `simulation.py` to point at `data/raw/flow_calibrated.json`).
+
+These scripts are intentionally simple examples to demonstrate a
+lightweight hybrid workflow (real-data → simulation calibration).
+
 Notes
 -----
 - This repository has been cleaned: generated outputs and cache files are
